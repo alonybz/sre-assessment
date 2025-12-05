@@ -1,5 +1,9 @@
 version: '3.9'
 
+networks:
+  monitoring:
+    driver: bridge
+
 services:
   csvserver:
     image: infracloudio/csvserver:latest
@@ -10,6 +14,8 @@ services:
       - csvserver.env
     volumes:
       - ./inputFile:/csvserver/inputdata
+    networks:
+      - monitoring
     restart: unless-stopped
 
-# Prometheus for metrics scraping
+# Prometheus and grafana

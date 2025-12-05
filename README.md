@@ -2,16 +2,17 @@
 
 ## Overview
 
-This project demonstrates the implementation of a monitoring stack using Docker Compose and Prometheus as part of an SRE interview assessment.
+This project demonstrates the implementation of a comprehensive monitoring stack using Docker Compose, Prometheus, and Grafana as part of an SRE interview assessment.
 
 ### Objectives
 
 1. Generate an input CSV file using the provided script
 2. Configure and run a service stack using Docker Compose
-3. Add Prometheus as a metrics collector
+3. Add Prometheus as a metrics collector and Grafana for visualization
 4. Start the environment and verify that Prometheus is scraping the target
-5. Produce or visualize at least one metric in the Prometheus dashboard
-6. (Optional) Implement a CI/CD workflow if additional time remains
+5. Create a basic dashboard in Grafana to visualize metrics
+6. Demonstrate monitoring and observability best practices
+7. (Optional) Implement a CI/CD workflow if additional time remains
 
 ## Project Structure
 
@@ -31,18 +32,12 @@ This project demonstrates the implementation of a monitoring stack using Docker 
 Execute the script to generate the required input file:
 
 ```bash
-./gencsv.sh START END
+./gencsv.sh 0 100
 ```
 
 This file serves as the data source for the CSV server component.
 
-### Step 2: Configure Docker Compose
-
-Update the `docker-compose.yml` file to include a Prometheus service. Ensure that:
-- Prometheus loads the `prometheus.yml` configuration file
-- The service can establish connectivity to the csvserver target
-
-### Step 3: Deploy the Environment
+### Step 2: Deploy the Environment
 
 Start all services using Docker Compose:
 
@@ -50,21 +45,32 @@ Start all services using Docker Compose:
 docker-compose up -d
 ```
 
-Verify that all containers are running successfully.
+This will start:
+- **CSV Server** on port 9393
+- **Prometheus** on port 9090
+- **Grafana** on port 3000
 
-### Step 4: Prometheus Access and Validation
+Verify that all containers are running successfully:
+
+```bash
+docker-compose ps
+```
+
+### Step 3: Prometheus Validation
 
 Access the Prometheus web interface:
 
 ```
-http://0.0.0.0:<port>
+http://localhost:9090
 ```
 
-Navigate to the **Targets** section to confirm that the service is being properly scraped and monitored.
+Navigate to **Status → Targets** to confirm that the CSV server is being properly scraped and shows as "UP".
 
-### Step 5: Metrics Visualization
+### Step 4: Grafana Dashboard
 
-Utilize the Prometheus dashboard to query and visualize at least one metric from the monitored service.
+1. Access Grafana: http://localhost:3000 (admin/admin)
+2. Add Prometheus data source: http://prometheus:9090
+3. Create dashboard with query: `up{job="csvserver"}`
 
 ## Optional Enhancement: CI/CD Pipeline
 
@@ -72,10 +78,21 @@ If time permits, implement a GitHub Actions workflow that includes:
 
 - Shell script linting and validation
 - Docker Compose file validation
+- Prometheus configuration validation
 - Additional quality assurance checks
+
+## Key Demonstration Points
+
+- **Observability Stack**: Complete metrics collection and visualization
+- **Service Discovery**: Automatic target detection by Prometheus
+- **Dashboard Creation**: Custom metrics visualization in Grafana
+- **Container Orchestration**: Multi-service Docker Compose setup
+- **Configuration Management**: Externalized configuration files
+- **Monitoring Best Practices**: Health checks and metric exposition
 
 ## Requirements
 
 - Docker
 - Docker Compose
-- Basic understanding of Prometheus configuration
+- Basic understanding of Prometheus and Grafana
+- PromQL query knowledge (basic)
